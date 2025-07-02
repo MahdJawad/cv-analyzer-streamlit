@@ -8,7 +8,7 @@ from docx import Document
 from fpdf import FPDF
 
 # Configuration
-BASE_FOLDER = "/content/drive/MyDrive/Mail_Auto_Recrutement"
+BASE_FOLDER = "data"
 RECRUITED_FOLDER = os.path.join(BASE_FOLDER, "retenus")
 OUTPUT_FILE = os.path.join(BASE_FOLDER, "classement_candidats.csv")
 KEYWORDS_FILE = os.path.join(BASE_FOLDER, "keywords.json")
@@ -112,12 +112,13 @@ def save_keywords(profiles_keywords):
         json.dump(profiles_keywords, f, indent=2)
 
 # Interface Streamlit
-st.title("\ud83d\udcbc Analyse de CV multi-profils")
+st.set_page_config(page_title="Analyse de CV", layout="centered")
+st.title("📋 Analyse de CV multi-profils")
 st.markdown("\nTéléversez les CVs, gérez vos mots-clés par profil, et effectuez des recherches plein texte.")
 
 saved_keywords = load_saved_keywords()
 
-with st.expander("\ud83d\udd0d Editeur de mots-clés par profil"):
+with st.expander("🔍 Editeur de mots-clés par profil"):
     selected_profile = st.text_input("Nom du profil pour édition", value=list(saved_keywords.keys())[0] if saved_keywords else "")
     existing_keywords = ", ".join(saved_keywords.get(selected_profile, []))
     new_keywords_input = st.text_area("Mots-clés (séparés par des virgules)", existing_keywords)
@@ -140,9 +141,9 @@ if profile and uploaded_files:
         st.dataframe(df[["Nom", "Profil", "Score"]])
 
         if not df.empty:
-            st.download_button("\ud83d\udd25 Télécharger le classement CSV", df.to_csv(index=False), file_name="classement_candidats.csv", mime="text/csv")
+            st.download_button("📥 Télécharger le classement CSV", df.to_csv(index=False), file_name="classement_candidats.csv", mime="text/csv")
 
-            with st.expander("\ud83d\udcc2 Aperçu texte brut (500 premiers caractères)"):
+            with st.expander("📂 Aperçu texte brut (500 premiers caractères)"):
                 for i, row in df.iterrows():
                     st.markdown(f"**{row['Nom']}** - Score: {row['Score']}")
                     st.code(row['Extrait'], language='text')
